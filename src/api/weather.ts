@@ -1,5 +1,5 @@
 import { API_CONFIG } from "./config";
-import type { Coordinates } from "./types";
+import type { Coordinates, ForecastData, GeocodingResponse, WeatherData } from "./types";
 
 class WeatherAPI{
 
@@ -22,16 +22,36 @@ class WeatherAPI{
         }
         console.log(response);
         return response.json();
-        // return await response.json();
     }
 
-    async getCurrentWeather({latitude, longitude} : Coordinates){
-        // const url = this.createUrl(API_CONFIG.BASE_URL, <"/weather", latitude, longitude>);
+    async getCurrentWeather({latitude, longitude} : Coordinates): Promise<WeatherData>{
         const url = this.createUrl(`${API_CONFIG.BASE_URL}/weather`, {
             latitude,
-            longitude
-        })
+            longitude,
+            units: API_CONFIG.DEFAULT_PARAMS.units
+        });
+        return this.fetchData<WeatherData>(url);
     }
 
+    async getForecast({latitude, longitude} : Coordinates) : Promise<ForecastData>{
+        const url = this.createUrl(`${API_CONFIG.BASE_URL}/forecast`, {
+            lat: latitude.toString(),
+            lon: longitude.toString(),
+            units: API_CONFIG.DEFAULT_PARAMS.units
+        });
 
+        return this.fetchData<ForecastData>(url);
+    }
+
+    async reverseGeocode({latitude, longitude} : Coordinates) : Promise<GeocodingResponse[]>{
+        const url = this.createUrl(`${API_CONFIG.GEOCODING_API}/reverse`, {
+            latitude,
+            longitude,
+            limit: 1
+        })
+
+        return this.fetchData<GeocodingResponse[]>(url);
+    }
 }
+
+export const weatherAPI = new WeatherAPI();
