@@ -20,14 +20,13 @@ class WeatherAPI{
         if(!response.ok){
             throw new Error(`Weather API Error : ${response.statusText}`);
         }
-        console.log(response);
         return response.json();
     }
 
     async getCurrentWeather({latitude, longitude} : Coordinates): Promise<WeatherData>{
         const url = this.createUrl(`${API_CONFIG.BASE_URL}/weather`, {
-            latitude,
-            longitude,
+            lat: latitude,
+            lon: longitude,
             units: API_CONFIG.DEFAULT_PARAMS.units
         });
         return this.fetchData<WeatherData>(url);
@@ -45,8 +44,8 @@ class WeatherAPI{
 
     async reverseGeocode({latitude, longitude} : Coordinates) : Promise<GeocodingResponse[]>{
         const url = this.createUrl(`${API_CONFIG.GEOCODING_API}/reverse`, {
-            latitude,
-            longitude,
+            lat: latitude,
+            lon: longitude,
             limit: 1
         })
 
